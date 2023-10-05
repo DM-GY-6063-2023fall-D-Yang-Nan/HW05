@@ -31,12 +31,12 @@ function setup() {
     let dest = table.getString(i, 'Destination Node');
     let linkType = table.getString(i, 'Link');
 
-    // Adjust stroke based on 'Link' value (you can customize this further)
+    // Adjust stroke based on 'Link' value
     if (linkType === 'helps') {
       stroke(0, 255, 0); // Green for 'helps'
       strokeWeight(2);
     } else {
-      stroke(255, 0, 0); // Red for other types (you can add more conditions)
+      stroke(255, 0, 0); // Red for other types
       strokeWeight(1);
     }
 
@@ -50,17 +50,24 @@ function setup() {
     let pos = positions[node];
     let nodeSize = nodes[node] * 5; // Adjust size based on relationship count
 
-    // Find the row for the current node and check if it's not null
+    // Color based on 'Source Node'
+    if (node === "Apple") {
+      fill(255, 0, 0); // Red for Apple
+    } else if (node === "Banana") {
+      fill(255, 255, 0); // Yellow for Banana
+    } // ... add more conditions for other nodes as needed
+
+    // Stroke based on 'Source Type'
     let row = table.findRow(node, 'Source Node');
     if (row) {
         let sourceType = row.getString('Source Type');
         if (sourceType === 'vegetables') {
-            fill(0, 0, 255); // Blue for 'vegetables'
+            stroke(0, 0, 255); // Blue for 'vegetables'
         } else {
-            fill(0); // Black for other types (you can add more conditions)
+            stroke(0); // Black for other types
         }
     } else {
-        fill(150); // Default color if node not found in 'Source Node' column
+        stroke(150); // Default color if node not found in 'Source Node' column
     }
 
     ellipse(pos.x, pos.y, nodeSize, nodeSize);
