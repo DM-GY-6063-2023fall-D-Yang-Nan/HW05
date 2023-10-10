@@ -1,79 +1,91 @@
-let table;
-let nodes = {};
-let positions = {};
+let data;
+let nodeNames = [];
+let nodeCounts = [];
+let nodeColors = [];
+let xPos = [];
+let yPos = [];
 
-function preload() {
-  table = loadTable('companion_plants.csv', 'csv', 'header');
+let source = data.getString(i, 'Source Node');
+let dest = data.getString(i,'Destination Node');
+let sourcetype = data.getString(i,'Source Type');
+let linktype = data.getString(i,'Link');
+
+function preload(){
+data = loadTable('companion_plants.csv', 'csv', 'header');
+
 }
 
-function setup() {
-  createCanvas(800, 600);
-  background(220);
+function setup(){
+createCanvas(windowWidth, windowHeight);
+background(255);
 
-  // Process data
-  for (let i = 0; i < table.getRowCount(); i++) {
-    let source = table.getString(i, 'Source Node');
-    let dest = table.getString(i, 'Destination Node');
+for(let i = 0; i < data.getRowCount(); i++){
+    let source = data.getString(i, 'Source Node');
+    let dest = data.getString(i,'Destination Node');
+    let sourcetype = data.getString(i,'Source Type');
 
-    // Count relationships for each node
-    nodes[source] = (nodes[source] || 0) + 1;
-    nodes[dest] = (nodes[dest] || 0) + 1;
-  }
+updateNode(source,sourcetype);
+updateNode(dest,sourcetype);
+}
 
-  // Assign a random position for each node
-  for (let node in nodes) {
-    positions[node] = createVector(random(width), random(height));
-  }
+for(let i = 0; i < nodeNames.length; i++){
 
-  // Draw links
-  for (let i = 0; i < table.getRowCount(); i++) {
-    let source = table.getString(i, 'Source Node');
-    let dest = table.getString(i, 'Destination Node');
-    let linkType = table.getString(i, 'Link');
+    xPos[i] = random(width);
+    yPos[i] = random(height);
+}
 
-    // Adjust stroke based on 'Link' value
-    if (linkType === 'helps') {
-      stroke(0, 255, 0); // Green for 'helps'
-      strokeWeight(2);
-    } else {
-      stroke(255, 0, 0); // Red for other types
-      strokeWeight(1);
+for(let i = 0; i < data.getRowCount(); i ++){
+    let source = data.getString(i, 'Source Node');
+    let dest = data.getString(i,'Destination Node');
+    let linktype = data.getString(i,'Link');
+
+    let sourceIndex = nodeNames.indexOf(source);
+    let destIndex = nodeNames.indexOf(dest);
+
+    if(linktype == 'helps'){
+    stroke('DarkSeaGreen');
+    }else{
+        stroke('Coral');
     }
-
-    let sourcePos = positions[source];
-    let destPos = positions[dest];
-    line(sourcePos.x, sourcePos.y, destPos.x, destPos.y);
-  }
-
-  // Draw nodes
-  for (let node in nodes) {
-    let pos = positions[node];
-    let nodeSize = nodes[node] * 5; // Adjust size based on relationship count
-
-    // Color based on 'Source Node'
-    if (node === "Apple") {
-      fill(255, 0, 0); // Red for Apple
-    } else if (node === "Banana") {
-      fill(255, 255, 0); // Yellow for Banana
-    } // ... add more conditions for other nodes as needed
-
-    // Stroke based on 'Source Type'
-    let row = table.findRow(node, 'Source Node');
-    if (row) {
-        let sourceType = row.getString('Source Type');
-        if (sourceType === 'vegetables') {
-            stroke(0, 0, 255); // Blue for 'vegetables'
-        } else {
-            stroke(0); // Black for other types
-        }
-    } else {
-        stroke(150); // Default color if node not found in 'Source Node' column
-    }
-
-    ellipse(pos.x, pos.y, nodeSize, nodeSize);
-  }
+    line(xPos[sourceIndex], yPos[sourceIndex], xPos[destIndex], yPos[destIndex]);
 }
 
-function draw() {
-  noLoop();
+for(i = 0; i < nodeNames.length; i ++){
+    let nodeSize = min(nodeCounts[i]*5,70);
+    let colortype = nodeColors[i];
+    if (colortype == 'vegetables') {
+        fill('CornflowerBlue'); // Green
+      } else if (colortype === 'fruits') {
+        fill('IndianRed'); // Red
+      } else if (colortype === 'herbs') {
+        fill('LightSeaGreen'); // Blue
+      } else if (colortype === 'flowers') {
+        fill('Plum'); // Purple
+      } else {
+        fill('SandyBrown'); // Default Gray
+      }
+  
+        // Remove stroke for the ellipse
+      ellipse(xPos[i], yPos[i], nodeSize, nodeSize);
+  
+
 }
+
+
+
+
+function updateNode(name,colorType){
+let index = nodeNames.indexOf(name);
+if(index == -1){
+   nodeNames.push(name);
+   nodeCounts.push(1);
+   nodeColors.push(colorType)
+
+}else{
+    nodeCounts[index] ++//每当我们在数据中再次遇到一个已知的节点名称时，我们就使用这行代码来增加与该节点名称相关联的计数。
+}
+
+
+}
+}
+
