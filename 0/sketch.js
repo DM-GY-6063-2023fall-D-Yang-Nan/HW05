@@ -51,7 +51,7 @@ for(let i = 0; i < data.getRowCount(); i ++){
 }
 
 for(i = 0; i < nodeNames.length; i ++){
-    let nodeSize = min(nodeCounts[i]*5,70);
+    let nodeSize = min(nodeCounts[i]*10,70);
     let colortype = nodeColors[i];
     if (colortype == 'vegetables') {
         fill('CornflowerBlue'); // Green
